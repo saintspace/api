@@ -21,6 +21,11 @@ func init() {
 			"message": "pong",
 		})
 	})
+	r.GET("/testing", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message": "success",
+		})
+	})
 
 	ginLambda = ginadapter.New(r)
 }
