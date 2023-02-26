@@ -39,7 +39,7 @@ func createEmailSubscription(email string) error {
 	}
 
 	putInput := &dynamodb.PutItemInput{
-		TableName: aws.String("my-email-subscriptions-table"),
+		TableName: aws.String(appConfig.EmailSubscriptionsTableName),
 		Item: map[string]*dynamodb.AttributeValue{
 			"email": {
 				S: aws.String(email),
