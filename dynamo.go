@@ -59,7 +59,7 @@ func createEmailSubscription(email string) error {
 	// Add the item to the table using the PutItem operation
 	_, err = svc.PutItem(putInput)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while putting item in table => %v", err.Error())
 	}
 	return nil
 }
