@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -12,6 +13,11 @@ import (
 var ginLambda *ginadapter.GinLambda
 
 func init() {
+	err := initConfig()
+	if err != nil {
+		err = fmt.Errorf("error while initializing app config => %v", err.Error())
+		log.Panic(err.Error())
+	}
 	log.Printf("Initializing lambda runtime with Gin router")
 	ginLambda = ginadapter.New(getRouter())
 }
