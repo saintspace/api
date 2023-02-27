@@ -16,9 +16,10 @@ func publishTask(message string) error {
 	svc := sns.New(sess)
 	uniqueMessageId := uuid.New().String()
 	_, err := svc.Publish(&sns.PublishInput{
-		Message:        &message,
-		TopicArn:       &appConfig.WorkerTasksTopicArn,
-		MessageGroupId: &uniqueMessageId,
+		Message:                &message,
+		TopicArn:               &appConfig.WorkerTasksTopicArn,
+		MessageGroupId:         &uniqueMessageId,
+		MessageDeduplicationId: &uniqueMessageId,
 	})
 	return fmt.Errorf("error while publishing task to SNS => %v", err.Error())
 }
