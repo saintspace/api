@@ -1,10 +1,11 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/sns"
-
-	"fmt"
+	"github.com/google/uuid"
 )
 
 func publishTask(message string) error {
@@ -13,10 +14,11 @@ func publishTask(message string) error {
 	}))
 
 	svc := sns.New(sess)
-
+	uniqueMessageId := uuid.New().String()
 	_, err := svc.Publish(&sns.PublishInput{
-		Message:  &message,
-		TopicArn: &appConfig.WorkerTasksTopicArn,
+		Message:        &message,
+		TopicArn:       &appConfig.WorkerTasksTopicArn,
+		MessageGroupId: &uniqueMessageId,
 	})
 	return fmt.Errorf("error while publishing task to SNS => %v", err.Error())
 }
