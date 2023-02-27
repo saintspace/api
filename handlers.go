@@ -29,6 +29,10 @@ var postEmailSubscriptionsHandler = func(c *gin.Context) {
 		return
 	}
 
+	if err := publishTask("test task from api"); err != nil {
+		log.Printf("error while publishing email verification task => %v", err.Error())
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"message": "email subscription successful",
 		"email":   data.EmailAddress,

@@ -21,6 +21,7 @@ func getConfigurationParameter(paramName string, ssmSession *ssm.SSM, isSecret b
 
 type AppConfig struct {
 	EmailSubscriptionsTableName string
+	WorkerTasksTopicArn         string
 }
 
 var appConfig AppConfig = AppConfig{
@@ -34,6 +35,7 @@ func initConfig() error {
 	ssmSession := ssm.New(sess)
 	var err error
 	var value string
+	// Get EmailSubscriptionsTableName parameter
 	value, err = getConfigurationParameter(
 		"email-subscriptions-table-name",
 		ssmSession,
@@ -43,5 +45,15 @@ func initConfig() error {
 		return err
 	}
 	appConfig.EmailSubscriptionsTableName = value
+	// Get WorkerTasksTopicArn parameter
+	value, err = getConfigurationParameter(
+		"worker-tasks-topic-arn",
+		ssmSession,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+	appConfig.WorkerTasksTopicArn = value
 	return nil
 }
