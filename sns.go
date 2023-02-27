@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/sns"
 	"github.com/google/uuid"
@@ -21,5 +19,5 @@ func publishTask(message string) error {
 		MessageGroupId:         &uniqueMessageId,
 		MessageDeduplicationId: &uniqueMessageId,
 	})
-	return fmt.Errorf("error while publishing task to SNS => %v", err.Error())
+	return err
 }
