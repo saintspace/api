@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 
@@ -29,8 +30,32 @@ var postEmailSubscriptionsHandler = func(c *gin.Context) {
 		return
 	}
 
-	if err := publishTask("test task from api"); err != nil {
-		log.Printf("error while publishing email verification task => %v", err.Error())
+	emailSendTask := EmailSendTask{
+		TemplateName:  "email-subscription-verification",
+		SenderAddress: "noreply@dev-messages.saintspace.app",
+		SubjectLine:   "SaintSpace: Confirm Your Subscription",
+		ToAddresses:   []string{data.EmailAddress},
+		Parameters: EmailSendTaskParameters{
+			VerificationLink: "https://dev.saintspace.app/p/verify-email?token=",
+		},
+	}
+	emailSendTaskBytes, err := json.Marshal(emailSendTask)
+	if err != nil {
+		log.Printf("error while marshaling email send task details => %v", err.Error())
+	} else {
+		task := Task{
+			TaskName:      "email-send",
+			CorrelationId: "",
+			TaskDetails:   string(emailSendTaskBytes),
+		}
+		taskBytes, err := json.Marshal(task)
+		if err != nil {
+			log.Printf("error while marshaling email send task => %v", err.Error())
+		} else {
+			if err := publishTask(string(taskBytes)); err != nil {
+				log.Printf("error while publishing email send task => %v", err.Error())
+			}
+		}
 	}
 
 	c.JSON(http.StatusOK, gin.H{
