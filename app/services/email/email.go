@@ -28,7 +28,7 @@ type iDatastore interface {
 }
 
 type iTaskPublisher interface {
-	PublishEmailVerificationTask(email string) error
+	PublishEmailVerificationTask(email, token string) error
 }
 
 func (s *EmailService) IsValidEmail(email string) bool {
@@ -49,7 +49,7 @@ func (s *EmailService) CreateEmailSubscription(email string) error {
 	if err != nil {
 		return fmt.Errorf("error while trying to create email subscription in datastore => %v", err.Error())
 	}
-	err = s.taskPublisher.PublishEmailVerificationTask(email)
+	err = s.taskPublisher.PublishEmailVerificationTask(email, subscriptionToken)
 	if err != nil {
 		fmt.Printf("error while attempting to publish email verification task {email: %s | error: %s}\n", email, err.Error())
 	}
