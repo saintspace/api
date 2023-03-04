@@ -1,4 +1,4 @@
-package main
+package taskpub
 
 type Task struct {
 	TaskName      string `json:"taskName"`
