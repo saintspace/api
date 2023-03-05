@@ -63,5 +63,5 @@ func (s *Config) EmailSubscriptionsTableName() string {
 }
 
 func (s *Config) WebAppDomainNameParameterName() string {
-	return s.standardParameters[emailSubscriptionsTableNameParameterName]
+	return s.standardParameters[webAppDomainNameParameterName]
 }
