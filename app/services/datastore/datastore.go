@@ -14,6 +14,7 @@ func New(kvStore iKeyValueStore) *Datastore {
 type iKeyValueStore interface {
 	EmailSubscriptionItemExists(email string) (bool, error)
 	CreateEmailSubscriptionItem(email string, subscriptionToken string, isVerified bool) error
+	VerifyEmailSubscription(email string) error
 }
 
 func (s *Datastore) CreateEmailSubscription(
@@ -26,4 +27,8 @@ func (s *Datastore) CreateEmailSubscription(
 
 func (s *Datastore) CheckEmailSubscriptionExists(email string) (bool, error) {
 	return s.kvStore.EmailSubscriptionItemExists(email)
+}
+
+func (s *Datastore) VerifyEmailSubscription(email string) error {
+	return s.kvStore.VerifyEmailSubscription(email)
 }

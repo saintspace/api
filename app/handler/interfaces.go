@@ -14,4 +14,5 @@ type iEmailService interface {
 	CreateEmailSubscription(email string) error
 	EmailSubscriptionExists(email string) (bool, error)
 	IsValidEmail(email string) bool
+	VerifyEmailwithSubscriptionToken(token string) error
 }

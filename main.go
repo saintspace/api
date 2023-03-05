@@ -39,7 +39,7 @@ func init() {
 	dynamoDbService := dynamodb.New(awsSession, configService)
 	snsService := sns.New(awsSession, configService)
 	datastoreService := datastore.New(dynamoDbService)
-	taskPublisherService := taskpub.New(snsService)
+	taskPublisherService := taskpub.New(snsService, configService)
 	emailService := email.New(datastoreService, taskPublisherService)
 	routeHandler := handler.New(emailService)
 	apiRouter := router.New(routeHandler)

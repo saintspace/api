@@ -90,3 +90,24 @@ func (s *DynamoDB) CreateEmailSubscriptionItem(
 	}
 	return s.putItem(tableName, item)
 }
+
+func (s *DynamoDB) VerifyEmailSubscription(email string) error {
+	tableName := s.config.EmailSubscriptionsTableName()
+	updateInput := &dynamodb.UpdateItemInput{
+		TableName: aws.String(tableName),
+		Key: map[string]*dynamodb.AttributeValue{
+			"email": {
+				S: aws.String(email),
+			},
+		},
+		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
+			":value": {
+				BOOL: aws.Bool(true),
+			},
+		},
+		UpdateExpression: aws.String("set email_verified = :value"),
+		ReturnValues:     aws.String("UPDATED_NEW"),
+	}
+	_, err := s.svc.UpdateItem(updateInput)
+	return err
+}

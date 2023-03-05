@@ -25,6 +25,7 @@ func New(datastore iDatastore, taskPublisher iTaskPublisher) *EmailService {
 type iDatastore interface {
 	CreateEmailSubscription(email string, subscriptionToken string, isVerified bool) error
 	CheckEmailSubscriptionExists(email string) (bool, error)
+	VerifyEmailSubscription(email string) error
 }
 
 type iTaskPublisher interface {
@@ -56,6 +57,25 @@ func (s *EmailService) CreateEmailSubscription(email string) error {
 	return nil
 }
 
+func (s *EmailService) VerifyEmailwithSubscriptionToken(token string) error {
+	email, err := parseEmailFromSubscriptionToken(token)
+	if err != nil {
+		return fmt.Errorf("error while trying to parse email from token => %v", err.Error())
+	}
+	subcriptionExists, err := s.datastore.CheckEmailSubscriptionExists(email)
+	if err != nil {
+		return fmt.Errorf("error while checking if email subscription exists => %v", err.Error())
+	}
+	if !subcriptionExists {
+		return fmt.Errorf("email subscription doesn't exist {email: %v}", email)
+	}
+	err = s.datastore.VerifyEmailSubscription(email)
+	if err != nil {
+		return fmt.Errorf("error while attempting to verify existing subscription => %v", err.Error())
+	}
+	return nil
+}
+
 func generateEmailSubscriptionToken(email string) (string, error) {
 	// Generate a 32-byte random token
 	tokenBytes := make([]byte, 32)
@@ -74,7 +94,7 @@ func generateEmailSubscriptionToken(email string) (string, error) {
 	return tokenWithPrefix, nil
 }
 
-func parseEmailSubscriptionToken(tokenWithPrefix string) (string, error) {
+func parseEmailFromSubscriptionToken(tokenWithPrefix string) (string, error) {
 	// Split the token into email token and token parts
 	parts := strings.Split(tokenWithPrefix, ":")
 	if len(parts) != 2 {

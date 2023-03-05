@@ -3,25 +3,34 @@ package taskpub
 import (
 	"encoding/json"
 	"fmt"
+	"net/url"
 )
 
 // TaskPublisher is responsible for publishing tasks to be completed later
 type TaskPublisher struct {
 	notifier iNotifier
+	config   iConfig
 }
 
 type iNotifier interface {
 	PublishTask(message string) error
 }
 
-func New(notifier iNotifier) *TaskPublisher {
+type iConfig interface {
+	WebAppDomainNameParameterName() string
+}
+
+func New(notifier iNotifier, config iConfig) *TaskPublisher {
 	return &TaskPublisher{
 		notifier: notifier,
+		config:   config,
 	}
 }
 
 func (s *TaskPublisher) PublishEmailVerificationTask(email, token string) error {
-	link := fmt.Sprintf("https://dev.saintspace.app/saintspace/verify-email?email=%s&token=%s", email, token)
+	escapedToken := url.QueryEscape(token)
+	linkTemplate := "https://%s/saintspace/verify-email?token=%s"
+	link := fmt.Sprintf(linkTemplate, s.config.WebAppDomainNameParameterName(), escapedToken)
 	emailSendTask := EmailSendTask{
 		TemplateName:  "email-subscription-verification",
 		SenderAddress: "noreply@dev-messages.saintspace.app",

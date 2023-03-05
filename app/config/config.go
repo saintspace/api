@@ -17,6 +17,7 @@ type Config struct {
 const (
 	taskSnsTopicArnParameterName             = "worker-tasks-topic-arn"
 	emailSubscriptionsTableNameParameterName = "email-subscriptions-table-name"
+	webAppDomainNameParameterName            = "web-app-domain-name"
 )
 
 func New(awsSession *session.Session) *Config {
@@ -25,6 +26,7 @@ func New(awsSession *session.Session) *Config {
 		standardParameters: map[string]string{
 			taskSnsTopicArnParameterName:             "",
 			emailSubscriptionsTableNameParameterName: "",
+			webAppDomainNameParameterName:            "",
 		},
 		secretParameters: map[string]string{},
 	}
@@ -57,5 +59,9 @@ func (s *Config) TaskSnsTopicArn() string {
 }
 
 func (s *Config) EmailSubscriptionsTableName() string {
+	return s.standardParameters[emailSubscriptionsTableNameParameterName]
+}
+
+func (s *Config) WebAppDomainNameParameterName() string {
 	return s.standardParameters[emailSubscriptionsTableNameParameterName]
 }
