@@ -17,7 +17,8 @@ type iNotifier interface {
 }
 
 type iConfig interface {
-	WebAppDomainNameParameterName() string
+	WebAppDomainName() string
+	MainTransactionalSendingAddress() string
 }
 
 func New(notifier iNotifier, config iConfig) *TaskPublisher {
@@ -30,10 +31,10 @@ func New(notifier iNotifier, config iConfig) *TaskPublisher {
 func (s *TaskPublisher) PublishEmailVerificationTask(email, token string) error {
 	escapedToken := url.QueryEscape(token)
 	linkTemplate := "https://%s/saintspace/verify-email?token=%s"
-	link := fmt.Sprintf(linkTemplate, s.config.WebAppDomainNameParameterName(), escapedToken)
+	link := fmt.Sprintf(linkTemplate, s.config.WebAppDomainName(), escapedToken)
 	emailSendTask := EmailSendTask{
 		TemplateName:  "email-subscription-verification",
-		SenderAddress: "noreply@dev-messages.saintspace.app",
+		SenderAddress: s.config.MainTransactionalSendingAddress(),
 		SubjectLine:   "SaintSpace: Confirm Your Subscription",
 		ToAddresses:   []string{email},
 		Parameters: EmailSendTaskParameters{

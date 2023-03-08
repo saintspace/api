@@ -15,18 +15,20 @@ type Config struct {
 }
 
 const (
-	taskSnsTopicArnParameterName             = "worker-tasks-topic-arn"
-	emailSubscriptionsTableNameParameterName = "email-subscriptions-table-name"
-	webAppDomainNameParameterName            = "web-app-domain-name"
+	taskSnsTopicArnParameterName                 = "worker-tasks-topic-arn"
+	emailSubscriptionsTableNameParameterName     = "email-subscriptions-table-name"
+	webAppDomainNameParameterName                = "web-app-domain-name"
+	mainTransactionalSendingAddressParameterName = "main-transactional-sending-address"
 )
 
 func New(awsSession *session.Session) *Config {
 	return &Config{
 		systemManager: ssm.New(awsSession),
 		standardParameters: map[string]string{
-			taskSnsTopicArnParameterName:             "",
-			emailSubscriptionsTableNameParameterName: "",
-			webAppDomainNameParameterName:            "",
+			taskSnsTopicArnParameterName:                 "",
+			emailSubscriptionsTableNameParameterName:     "",
+			webAppDomainNameParameterName:                "",
+			mainTransactionalSendingAddressParameterName: "",
 		},
 		secretParameters: map[string]string{},
 	}
@@ -62,6 +64,10 @@ func (s *Config) EmailSubscriptionsTableName() string {
 	return s.standardParameters[emailSubscriptionsTableNameParameterName]
 }
 
-func (s *Config) WebAppDomainNameParameterName() string {
+func (s *Config) WebAppDomainName() string {
 	return s.standardParameters[webAppDomainNameParameterName]
+}
+
+func (s *Config) MainTransactionalSendingAddress() string {
+	return s.standardParameters[mainTransactionalSendingAddressParameterName]
 }
