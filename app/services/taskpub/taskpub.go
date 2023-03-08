@@ -35,7 +35,7 @@ func (s *TaskPublisher) PublishEmailVerificationTask(email, token string) error 
 	emailSendTask := EmailSendTask{
 		TemplateName:  "email-subscription-verification",
 		SenderAddress: s.config.MainTransactionalSendingAddress(),
-		SubjectLine:   "SaintSpace: Confirm Your Subscription",
+		SubjectLine:   "Confirm Your Subscription",
 		ToAddresses:   []string{email},
 		Parameters: EmailSendTaskParameters{
 			VerificationLink: link,
