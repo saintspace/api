@@ -48,11 +48,16 @@ func (s *RouteHandler) PostEmailSubscriptionsHandler(c *gin.Context) {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Error occured while saving your email subscription"})
 			return
 		} else {
-			s.loggerService.ErrorWithContext(
+			s.loggerService.InfoWithContext(
 				"Successfully created email subscription",
 				"email", data.EmailAddress,
 			)
 		}
+	} else {
+		s.loggerService.InfoWithContext(
+			"Email subscription already exists",
+			"email", data.EmailAddress,
+		)
 	}
 
 	c.JSON(http.StatusOK, gin.H{
