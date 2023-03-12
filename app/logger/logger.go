@@ -15,10 +15,9 @@ func New(debugEnabled bool) (*Logger, error) {
 	var logger *zap.Logger
 	var err error
 	if debugEnabled {
-		logger, err = zap.NewProduction()
-
-	} else {
 		logger, err = zap.NewDevelopment()
+	} else {
+		logger, err = zap.NewProduction()
 	}
 	if err != nil {
 		return nil, fmt.Errorf("error initializing logger => %v", err.Error())
