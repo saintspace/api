@@ -7,6 +7,7 @@ import (
 	"api/app"
 	"api/app/config"
 	"api/app/handler"
+	"api/app/logger"
 	"api/app/router"
 	"api/app/services/aws/dynamodb"
 	"api/app/services/aws/sns"
@@ -34,6 +35,13 @@ func init() {
 		log.Panic(err.Error())
 	}
 
+	// Set up the logger
+	loggerService, err := logger.New(false)
+	if err != nil {
+		err = fmt.Errorf("error while initializing logger => %v", err.Error())
+		log.Panic(err.Error())
+	}
+
 	// Build application dependencies
 
 	dynamoDbService := dynamodb.New(awsSession, configService)
@@ -41,7 +49,7 @@ func init() {
 	datastoreService := datastore.New(dynamoDbService)
 	taskPublisherService := taskpub.New(snsService, configService)
 	emailService := email.New(datastoreService, taskPublisherService)
-	routeHandler := handler.New(emailService)
+	routeHandler := handler.New(emailService, loggerService)
 	apiRouter := router.New(routeHandler)
 	ginLambdaAdapter := ginadapter.New(apiRouter.GetRouter())
 	application = app.New(ginLambdaAdapter)

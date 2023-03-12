@@ -1,12 +1,14 @@
 package handler
 
 type RouteHandler struct {
-	emailService iEmailService
+	emailService  iEmailService
+	loggerService iLoggerService
 }
 
-func New(emailService iEmailService) *RouteHandler {
+func New(emailService iEmailService, loggerService iLoggerService) *RouteHandler {
 	return &RouteHandler{
-		emailService: emailService,
+		emailService:  emailService,
+		loggerService: loggerService,
 	}
 }
 
@@ -15,4 +17,10 @@ type iEmailService interface {
 	EmailSubscriptionExists(email string) (bool, error)
 	IsValidEmail(email string) bool
 	VerifyEmailwithSubscriptionToken(token string) error
+}
+
+type iLoggerService interface {
+	InfoWithContext(message string, keysAndValues ...interface{})
+	ErrorWithContext(message string, keysAndValues ...interface{})
+	DebugWithContext(message string, keysAndValues ...interface{})
 }

@@ -1,12 +1,10 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 	"net/url"
 
 	"github.com/gin-gonic/gin"
-	"github.com/labstack/gommon/log"
 )
 
 type PostVerifyEmailRequestData struct {
@@ -16,19 +14,30 @@ type PostVerifyEmailRequestData struct {
 func (s *RouteHandler) PostVerifyEmailHandler(c *gin.Context) {
 	var data PostVerifyEmailRequestData
 	if err := c.ShouldBindJSON(&data); err != nil {
-		log.Error(fmt.Sprintf("error while parsing PostVerifyEmailHandler request => %v", err.Error()))
+		s.loggerService.ErrorWithContext(
+			"error while parsing PostVerifyEmailHandler request",
+			"error", err.Error(),
+		)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 	unescapedSubscriptionToken, err := url.QueryUnescape(data.SubscriptionToken)
 	if err != nil {
-		log.Error(fmt.Sprintf("error while unescaping email verification token => %v", err.Error()))
+		s.loggerService.ErrorWithContext(
+			"error while unescaping email verification token",
+			"error", err.Error(),
+			"token", data.SubscriptionToken,
+		)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "error while parsing verification token"})
 		return
 	}
 	err = s.emailService.VerifyEmailwithSubscriptionToken(unescapedSubscriptionToken)
 	if err != nil {
-		log.Error(fmt.Sprintf("error while verifying email {token: %s} => %s", unescapedSubscriptionToken, err.Error()))
+		s.loggerService.ErrorWithContext(
+			"error while verifying email",
+			"error", err.Error(),
+			"token", unescapedSubscriptionToken,
+		)
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "error while attempting to verify subscription",
 		})

@@ -6,7 +6,7 @@ import (
 	"net/url"
 )
 
-// TaskPublisher is responsible for publishing tasks to be completed later
+// TaskPublisher is responsible for building & publishing tasks to be completed later by a worker
 type TaskPublisher struct {
 	notifier iNotifier
 	config   iConfig
